@@ -49,7 +49,7 @@ func (arg *ServiceLess) Start(s service.Service) error {
 	return nil
 }
 
-/*基于数组实现的栈*/
+/*基于数组实现的栈 后入先出*/
 type ArrayStack[T interface{}] struct {
 	Data       []T //数据
 	maxPolicy  StackPolicy
@@ -66,16 +66,19 @@ const (
 /*初始化栈*/
 func NewArrayStack[T any](size int) *ArrayStack[T] {
 	return &ArrayStack[T]{
-		Data:       make([]T, size),
-		maxPolicy:  Drop,
-		maxSize:    size,
-		sizeCursor: 0,
+		Data:      make([]T, size),
+		maxPolicy: Drop,
+		maxSize:   size,
 	}
 }
 
-/*栈的长度*/
+func (s ArrayStack[T]) MaxSize() int {
+	return s.maxSize
+}
+
+/*栈当前的长度*/
 func (s *ArrayStack[T]) Size() int {
-	return len(s.Data)
+	return s.sizeCursor
 }
 
 /*栈是否为空*/
@@ -85,9 +88,8 @@ func (s *ArrayStack[T]) IsEmpty() bool {
 
 /*入栈*/
 func (s *ArrayStack[T]) Push(v T) {
-	if s.Size() == s.sizeCursor {
-		s.Pop()
-		s.sizeCursor -= 1
+	if s.maxSize == s.sizeCursor {
+		return
 	}
 	s.Data[s.sizeCursor] = v
 	s.sizeCursor += 1
@@ -99,7 +101,7 @@ func (s *ArrayStack[T]) Pop() any {
 		return 0
 	}
 	val := s.Peek()
-	temp := s.Data[:len(s.Data)-1]
+	temp := s.Data[:s.Size()-1]
 	s.Data = make([]T, s.maxSize)
 	copy(s.Data, temp)
 	s.sizeCursor -= 1
@@ -118,4 +120,69 @@ func (s *ArrayStack[T]) Peek() any {
 /* 获取 Slice 用于打印 */
 func (s *ArrayStack[T]) ToSlice() []T {
 	return s.Data
+}
+
+type ArrayQuene[T any] struct {
+	data       []T
+	sizeCursor int
+	maxSize    int
+}
+
+func NewArrayQuene[T any](size int) *ArrayQuene[T] {
+	return &ArrayQuene[T]{
+		data:       make([]T, size),
+		maxSize:    size,
+		sizeCursor: 0,
+	}
+}
+
+func (s ArrayQuene[T]) MaxSize() int {
+	return s.maxSize
+}
+
+/*队列当前的长度*/
+func (s *ArrayQuene[T]) Size() int {
+	return s.sizeCursor
+}
+
+/*队列是否为空*/
+func (s *ArrayQuene[T]) IsEmpty() bool {
+	return s.sizeCursor == 0
+}
+
+/*入队*/
+func (s *ArrayQuene[T]) Push(v T) {
+	if s.maxSize == s.sizeCursor {
+		s.Pop()
+	}
+	s.data[s.sizeCursor] = v
+	s.sizeCursor += 1
+}
+
+/*出队*/
+func (s *ArrayQuene[T]) Pop() any {
+	if s.Size() == 0 {
+		return 0
+	}
+	val := s.Peek()
+	temp := s.data[1:]
+	s.data = make([]T, s.maxSize)
+	copy(s.data, temp)
+	s.sizeCursor -= 1
+	return val
+}
+
+/* 获取队首元素 */
+func (s *ArrayQuene[T]) Peek() any {
+	if s.IsEmpty() {
+		return nil
+	}
+	val := s.data[0]
+
+	return val
+}
+
+/* 获取 Slice 用于打印 */
+func (s *ArrayQuene[T]) ToSlice() []T {
+	return s.data
 }
