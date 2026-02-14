@@ -1,4 +1,4 @@
-package tool
+package autotool
 
 type Reader struct {
 	data    []byte

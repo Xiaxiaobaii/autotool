@@ -1,4 +1,4 @@
-package tool
+package autotool
 
 type CryptType string
 

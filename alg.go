@@ -1,4 +1,4 @@
-package tool
+package autotool
 
 import (
 	"github.com/kardianos/service"
