@@ -1,4 +1,4 @@
-module autotool
+module github.com/Xiaxiaobaii/autotool
 
 go 1.24.2
 
