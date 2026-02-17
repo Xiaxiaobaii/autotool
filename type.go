@@ -10,9 +10,9 @@ type errorString struct {
 	s string
 }
 
-type Kvalue struct {
-	key   any
-	value any
+type Kvalue[T any] struct {
+	key   T
+	value T
 }
 
 type TokenBucket struct {

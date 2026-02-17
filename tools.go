@@ -454,10 +454,11 @@ func Print(str ...any) {
 	_, _ = fmt.Println(str...)
 }
 
-func NewKvO(key, value interface{}) Kvalue {
-	kv := NewKv()
-	kv.Set(key, value)
-	return *kv
+func NewKvO[T any](key, value T) Kvalue[T] {
+	return Kvalue[T]{
+		key:   key,
+		value: value,
+	}
 }
 
 var Flags map[string]func(str string) = map[string]func(str string){}
@@ -549,41 +550,18 @@ func Sleep(i int) {
 	}
 }
 
-func CheckKv(kv Kvalue) bool {
-	return kv.key != nil && kv.value != nil
-}
-
-func CopyMap(Map map[any]any) map[any]any {
-	Data := new(map[any]any)
-	for k, v := range Map {
-		(*Data)[k] = v
-	}
-	return *Data
-}
-
 func CopySlice[T any](Slice []T) []T {
 	result := make([]T, len(Slice))
 	copy(result, Slice)
 	return result
 }
 
-func NewKv() *Kvalue {
-	return &Kvalue{
-		key:   nil,
-		value: nil,
-	}
+func (kv *Kvalue[T]) Set(key, value T) {
+	kv.key = key
+	kv.value = value
 }
 
-func (kv *Kvalue) Set(key any, value any) {
-	if key != nil {
-		kv.key = key
-	}
-	if value != nil {
-		kv.value = value
-	}
-}
-
-func (kv *Kvalue) Get() (any, any) {
+func (kv *Kvalue[T]) Get() (T, T) {
 	return kv.key, kv.value
 }
 
